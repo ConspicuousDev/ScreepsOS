@@ -7,13 +7,13 @@ const ProcessTable = require("./ProcessTable")
 class Kernel{
     constructor() {
         this.manager = new MemoryManager()
-    
+        
         this.processes = this.parseProcesses(this.manager.memory.processes)
                 
         if(this.processes.length == 0){
             this.registerProcess(new ProcessTable.LoggerProcess({id: "Logger", kernel: this}))
             this.registerProcess(new ProcessTable.DrawProcess({id: "Drawer", kernel: this}))
-            this.registerProcess(new ProcessTable.RoomWatcherProcess({kernel: this, data: {roomName: Object.keys(this.manager.memory.rooms)[0]}}))
+            Game.spawns.forEach((name, spawn) => this.registerProcess(new ProcessTable.RoomWatcherProcess({kernel: this, data: {roomName: spawn.room.name}})))
         }
 
         this.logger = this.findProcess("Logger", Constants.PROCESS_PRIORITIES.KERNEL)

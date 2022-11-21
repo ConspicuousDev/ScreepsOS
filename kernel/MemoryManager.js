@@ -4,8 +4,6 @@ class MemoryManager {
 
         //FIRST RUN
         if("creeps" in this.memory || Object.keys(this.memory).length==0){
-            let firstSpawn = Game.spawns[Object.keys(Game.spawns)[0]]
-            
             this.memory = {
                 username: firstSpawn.owner.username,
                 processes: [],
