@@ -7,11 +7,8 @@ class MemoryManager {
             this.memory = {
                 username: firstSpawn.owner.username,
                 processes: [],
-                rooms: {},
                 ram: {}
             }
-            
-            this.memory.rooms[firstSpawn.room.name] = {}
         }
         
     }
