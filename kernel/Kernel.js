@@ -13,7 +13,7 @@ class Kernel{
         if(this.processes.length === 0){
             this.registerProcess(new ProcessTable.LoggerProcess({id: "Logger", kernel: this}))
             this.registerProcess(new ProcessTable.DrawProcess({id: "Drawer", kernel: this}))
-            Game.spawns.forEach((name, spawn) => this.registerProcess(new ProcessTable.RoomWatcherProcess({kernel: this, data: {roomName: spawn.room.name}})))
+            Object.values(Game.spawns).forEach(spawn => this.registerProcess(new ProcessTable.RoomWatcherProcess({kernel: this, data: {roomName: spawn.room.name}})))
         }
 
         this.logger = this.findProcess("Logger", Constants.PROCESS_PRIORITIES.KERNEL)
