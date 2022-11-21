@@ -1,4 +1,3 @@
-const LoggerProcess = require("../processes/LoggerProcess");
 const OSConstants = require("../util/OSConstants")
 const MemoryManager = require("./MemoryManager");
 const ProcessTable = require("./ProcessTable")
@@ -7,8 +6,6 @@ const ProcessTable = require("./ProcessTable")
 class Kernel{
     constructor() {
         this.manager = new MemoryManager()
-        
-        ScreepConstants.FIND_EXITS
 
         this.processes = this.parseProcesses(this.manager.memory.processes)
                 
