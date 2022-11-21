@@ -3,7 +3,7 @@ class MemoryManager {
         this.memory = JSON.parse(RawMemory.get())
 
         //FIRST RUN
-        if("creeps" in this.memory || Object.keys(this.memory).length==0){
+        if("creeps" in this.memory || Object.keys(this.memory).length === 0){
             this.memory = {
                 username: firstSpawn.owner.username,
                 processes: [],
