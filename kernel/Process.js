@@ -1,9 +1,6 @@
 const Constants = require("../util/Constants")
 
 class Process {
-    /**
-     * @param {Process} parent
-     */
     constructor(id, parent, priority, status, kernel, data = {}){
         this.id = id
         this.parent = parent
