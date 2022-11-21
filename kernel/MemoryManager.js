@@ -5,7 +5,6 @@ class MemoryManager {
         //FIRST RUN
         if("creeps" in this.memory || Object.keys(this.memory).length === 0){
             this.memory = {
-                username: firstSpawn.owner.username,
                 processes: [],
                 ram: {}
             }
