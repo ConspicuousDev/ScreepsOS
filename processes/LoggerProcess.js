@@ -9,7 +9,7 @@ class LoggerProcess extends Process{
     }
 
     run(){
-        if(this.lines.length == 0) return
+        if(this.lines.length === 0) return
         console.log(this.lines.reduce((a, b) => `${a}${a.length > 0 ? "\n" : ""}${b}`, ""))
         this.lines = []
     }
