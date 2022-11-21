@@ -1,10 +1,10 @@
 const Process = require("../kernel/Process")
-const Constants = require("../util/Constants");
+const OSConstants = require("../util/OSConstants")
 
 class RoomWatcherProcess extends Process{
     
     constructor({kernel, data, priority = 0}){
-        super(`RoomWatcher-${data.roomName}`, null, priority, Constants.STATUS_CODES.OK, kernel, data)
+        super(`RoomWatcher-${data.roomName}`, null, priority, OSConstants.STATUS_CODES.OK, kernel, data)
     }
 
     run(){
@@ -34,10 +34,10 @@ class RoomWatcherProcess extends Process{
     /** @param {Room} room */
     checkOwnership(room){
         if(room.controller.my){
-            this.data.roomOwnership = Constants.ROOM_OWNERSHIP.OWNED
+            this.data.roomOwnership = OSConstants.ROOM_OWNERSHIP.OWNED
             return
         }
-        this.data.roomOwnership = room.controller.owner ? Constants.ROOM_OWNERSHIP.ENEMY : Constants.ROOM_OWNERSHIP.UNCLAIMED 
+        this.data.roomOwnership = room.controller.owner ? OSConstants.ROOM_OWNERSHIP.ENEMY : OSConstants.ROOM_OWNERSHIP.UNCLAIMED 
     }
 
     /** @param {Room} room */

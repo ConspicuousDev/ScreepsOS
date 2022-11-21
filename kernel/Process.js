@@ -1,4 +1,4 @@
-const Constants = require("../util/Constants")
+const OSConstants = require("../util/OSConstants")
 
 class Process {
     constructor(id, parent, priority, status, kernel, data = {}){
@@ -27,7 +27,7 @@ class Process {
     }
 
     kill(){
-        this.status = Constants.STATUS_CODES.DEAD
+        this.status = OSConstants.STATUS_CODES.DEAD
         this.kernel.killProcess(this.id, this.priority)
     }
 }

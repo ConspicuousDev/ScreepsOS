@@ -1,5 +1,5 @@
 const LoggerProcess = require("../processes/LoggerProcess");
-const Constants = require("../util/Constants")
+const OSConstants = require("../util/OSConstants")
 const MemoryManager = require("./MemoryManager");
 const ProcessTable = require("./ProcessTable")
 
@@ -8,6 +8,8 @@ class Kernel{
     constructor() {
         this.manager = new MemoryManager()
         
+        ScreepConstants.FIND_EXITS
+
         this.processes = this.parseProcesses(this.manager.memory.processes)
                 
         if(this.processes.length === 0){
@@ -16,8 +18,8 @@ class Kernel{
             Object.values(Game.spawns).forEach(spawn => this.registerProcess(new ProcessTable.RoomWatcherProcess({kernel: this, data: {roomName: spawn.room.name}})))
         }
 
-        this.logger = this.findProcess("Logger", Constants.PROCESS_PRIORITIES.KERNEL)
-        this.drawer = this.findProcess("Drawer", Constants.PROCESS_PRIORITIES.KERNEL)
+        this.logger = this.findProcess("Logger", OSConstants.PROCESS_PRIORITIES.KERNEL)
+        this.drawer = this.findProcess("Drawer", OSConstants.PROCESS_PRIORITIES.KERNEL)
 
         this.logger.log("Kernel", "Started successfully.", "#FFAAAA")
     }

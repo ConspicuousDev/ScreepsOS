@@ -1,11 +1,11 @@
 const Process = require("../kernel/Process")
-const Constants = require("../util/Constants")
+const OSConstants = require("../util/OSConstants")
 
 class LoggerProcess extends Process{
     lines = []
 
     constructor({id, kernel, data = {}}){
-        super(id, null, Constants.PROCESS_PRIORITIES.KERNEL, Constants.STATUS_CODES.OK, kernel, data)
+        super(id, null, OSConstants.PROCESS_PRIORITIES.KERNEL, OSConstants.STATUS_CODES.OK, kernel, data)
     }
 
     run(){
