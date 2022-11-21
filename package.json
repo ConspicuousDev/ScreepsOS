@@ -1,0 +1,23 @@
+{
+  "name": "screepsos",
+  "version": "1.0.0",
+  "description": "Our OS for Screeps.\r ## Usage\r To use this OS in Screeps, it first needs to be compiled. You can use [this](https://github.com/OmniscientARK/ScreepsOSCompiler\r ) compiler.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OmniscientARK/ScreepsOS.git"
+  },
+  "author": "Omniscient & Iker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OmniscientARK/ScreepsOS/issues"
+  },
+  "homepage": "https://github.com/OmniscientARK/ScreepsOS#readme",
+  "dependencies": {
+    "@types/lodash": "^4.14.189",
+    "@types/screeps": "^3.3.0"
+  }
+}
