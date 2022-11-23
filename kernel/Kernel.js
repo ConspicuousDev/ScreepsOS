@@ -1,18 +1,18 @@
 const OSConstants = require("../util/OSConstants")
 const MemoryManager = require("./MemoryManager");
-const ProcessTable = require("./ProcessTable")
-
 
 class Kernel{
     constructor() {
+        this.ProcessTable = require("./ProcessTable")
+
         this.manager = new MemoryManager()
 
         this.processes = this.parseProcesses(this.manager.memory.processes)
                 
         if(this.processes.length === 0){
-            this.registerProcess(new ProcessTable.LoggerProcess({id: "Logger", kernel: this}))
-            this.registerProcess(new ProcessTable.DrawProcess({id: "Drawer", kernel: this}))
-            Object.values(Game.spawns).forEach(spawn => this.registerProcess(new ProcessTable.RoomWatcherProcess({kernel: this, data: {roomName: spawn.room.name}})))
+            this.registerProcess(new this.ProcessTable.LoggerProcess({id: "Logger", kernel: this}))
+            this.registerProcess(new this.ProcessTable.DrawProcess({id: "Drawer", kernel: this}))
+            Object.values(Game.spawns).forEach(spawn => this.registerProcess(new this.ProcessTable.RoomWatcherProcess({kernel: this, data: {roomName: spawn.room.name}})))
         }
 
         this.logger = this.findProcess("Logger", OSConstants.PROCESS_PRIORITIES.KERNEL)
@@ -44,7 +44,7 @@ class Kernel{
     }
 
     parseProcesses(processesJson){
-        return processesJson.map(priorityLevel => priorityLevel ? priorityLevel.map(process => new ProcessTable[process.type]({...process, kernel: this})) : undefined)
+        return processesJson.map(priorityLevel => priorityLevel ? priorityLevel.map(process => new this.ProcessTable[process.type]({...process, kernel: this})) : undefined)
     }
     serializeProcesses(processes){
         return processes.map(priorityLevel => priorityLevel ? priorityLevel.map(process => process.serialize()) : undefined)

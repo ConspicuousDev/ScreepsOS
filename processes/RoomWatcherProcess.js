@@ -1,6 +1,5 @@
 const Process = require("../kernel/Process")
 const OSConstants = require("../util/OSConstants")
-const ProcessTable = require("../kernel/ProcessTable")
 class RoomWatcherProcess extends Process{
 
     constructor({kernel, data, priority = 0}){
@@ -22,7 +21,7 @@ class RoomWatcherProcess extends Process{
         if(this.data.workerProcesses.length < 1){
             let creep = this.tryCreateSmallWorker()
             if(creep != null){
-                let process = new ProcessTable.SmallMinerProcess({kernel: this.kernel, parent: this.id, priority: this.priority, status: OSConstants.STATUS_CODES.OK, data: {creepName : creep, startTick: Game.time + 9}})
+                let process = new this.kernel.ProcessTable.SmallMinerProcess({kernel: this.kernel, parent: this.id, priority: this.priority, status: OSConstants.STATUS_CODES.OK, data: {creepName : creep, startTick: Game.time + 9}})
                 this.kernel.registerProcess(process)
                 this.data.workerProcesses.push(process.id)
             }
@@ -114,8 +113,6 @@ class RoomWatcherProcess extends Process{
     notifyChildDone(processID){
         console.log(processID)
         this.data.workerProcesses.remove(processID)
-        //qq deu? ah lol kkkkk malz
-        //da push pra mim dar pull no client side aq
     }
 }
 
