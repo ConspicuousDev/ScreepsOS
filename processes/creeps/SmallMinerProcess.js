@@ -7,7 +7,7 @@ class SmallMinerProcess extends Process {
     }
 
     run(){
-        if(this.data.startTick===Game.time+3) return;
+        if(this.data.startTick === Game.time+3) return;
         if(!(this.data.creepName in Game.creeps)){
             this.kill()
             return
@@ -19,6 +19,7 @@ class SmallMinerProcess extends Process {
     kill(){
         super.kill()
         let parentProcess = this.kernel.findProcess(this.parent)
+        console.log(parentProcess)
         parentProcess.notifyChildDone(this.id)
     }
 
