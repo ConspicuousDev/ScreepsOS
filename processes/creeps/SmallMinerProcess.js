@@ -19,7 +19,7 @@ class SmallMinerProcess extends Process {
     kill(){
         super.kill()
         let parentProcess = this.kernel.findProcess(this.parent)
-        console.log(parentProcess)
+        console.log(this.parent, parentProcess.type)
         parentProcess.notifyChildDone(this.id)
     }
 

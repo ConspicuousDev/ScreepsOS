@@ -1,5 +1,5 @@
-const Process = require("../kernel/Process")
-const OSConstants = require("../util/OSConstants")
+const Process = require("../../kernel/Process")
+const OSConstants = require("../../util/OSConstants")
 
 class MoveToTargetProcess extends Process {
     constructor({kernel, data, priority = 0}){

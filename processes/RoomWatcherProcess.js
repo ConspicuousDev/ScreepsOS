@@ -111,8 +111,7 @@ class RoomWatcherProcess extends Process{
         return creepName
     }
     notifyChildDone(processID){
-        console.log(processID)
-        this.data.workerProcesses.remove(processID)
+        this.data.workerProcesses = this.data.workerProcesses.filter(process => process !== processID)
     }
 }
 

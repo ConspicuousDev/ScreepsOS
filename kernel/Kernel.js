@@ -29,7 +29,7 @@ class Kernel{
         if(priority < 0){
             for(priority = 0; priority < this.processes.length; priority++){
                 if(!this.processes[priority]) continue
-                let process = this.processes[priority].find(process => process.id !== id)
+                let process = this.processes[priority].find(process => process.id === id)
                 if(process != null) return process
             }
             return undefined
