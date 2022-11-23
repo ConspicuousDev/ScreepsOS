@@ -30,6 +30,11 @@ class Process {
         this.status = OSConstants.STATUS_CODES.DEAD
         this.kernel.killProcess(this.id, this.priority)
     }
+
+    spawnChild(){
+        this.status = OSConstants.STATUS_CODES.WAITING_CHILD
+        this.kernel.registerProcess()
+    }
 }
 
 module.exports = Process

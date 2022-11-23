@@ -16,17 +16,13 @@ class RoomWatcherProcess extends Process{
         
         if(!("energySources" in this.data)) this.loadEnergySources(room)
         if(!("roomExits" in this.data)) this.loadExits(room)
-        
-        //Create function to check max energy for collection.
-        //Calculate how many creeps of current size will take to use up all energy
-        //Upgrade RC when not needing more creeps, when needing more creeps put energy on spawner to spawn
-        //Build expansion to have bigger creeps
-        //When enough expansions switch to hauler + miner model (recycle creeps when necessary)
-    
-        //When huge haulers / miners do remote mining
+        if(!("workers" in this.data)) this.data.workerProcesses = []
 
-        //When RCL 8 build final defenses and scout out adjecent rooms and claim one/two and carry it
-    
+        //TODO: Change this check for a [Do we have enough workers to extract max energy check]
+        if(this.data.workerProcesses.length < 1){
+            tryCreateWorker()
+        }
+
         this.highlightExits(this.kernel)
         this.highlightSources(this.kernel)
     }
@@ -79,13 +75,17 @@ class RoomWatcherProcess extends Process{
     }
 
     /** @param {Kernel} kernel */
-    highlightExits(kernel){
-        this.data.roomExits.forEach(element => kernel.drawer.setHighlightSquare({x: element.x, y: element.y, roomName: this.data.roomName}, "#00FF00", .5));
+    highlightExits(){
+        this.data.roomExits.forEach(element => this.kernel.drawer.setHighlightSquare({x: element.x, y: element.y, roomName: this.data.roomName}, "#00FF00", .5));
     }
 
     /** @param {Kernel} kernel */
-    highlightSources(kernel){
-        Object.keys(this.data.energySources).forEach(element => kernel.drawer.setHighlightSquare({x: this.data.energySources[element].pos.x, y: this.data.energySources[element].pos.y, roomName: this.data.roomName}, "#FFFF00", .5));
+    highlightSources(){
+        Object.keys(this.data.energySources).forEach(element => this.kernel.drawer.setHighlightSquare({x: this.data.energySources[element].pos.x, y: this.data.energySources[element].pos.y, roomName: this.data.roomName}, "#FFFF00", .5));
+    }
+
+    tryCreateWorker(){
+
     }
 }
 
