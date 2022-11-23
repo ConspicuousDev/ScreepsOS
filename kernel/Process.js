@@ -36,6 +36,11 @@ class Process {
         this.status = OSConstants.STATUS_CODES.WAITING_CHILD
         this.kernel.registerProcess(process)
     }
+
+    /*notifyChildDone(){
+        console.log("WRONG")
+        this.status = OSConstants.STATUS_CODES.OK
+    }*/
 }
 
 module.exports = Process

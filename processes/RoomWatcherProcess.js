@@ -113,8 +113,10 @@ class RoomWatcherProcess extends Process{
         return creepName
     }
 
-    checkSubProcesses(){
-        this.kernel.findProcess()
+    //Overrides Process
+    notifyChildDone(procId){
+        console.log(procId)
+        this.data.workerProcesses.remove(procId)
     }
 }
 

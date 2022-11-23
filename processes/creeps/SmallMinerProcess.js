@@ -15,6 +15,13 @@ class SmallMinerProcess extends Process {
 
         this.kernel.logger.log(this.id, "WORKING", "#00FF00")
     }
+
+    kill(){
+        super.kill()
+        let parentProcess = this.kernel.findProcess(this.parent)
+        parentProcess.notifyChildDone(this.id)
+    }
+
 }
 
 module.exports = SmallMinerProcess
