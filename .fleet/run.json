@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "command",
+            "name": "compile",
+            "program": "python.exe",
+            //"args": ["D:/Screeps/ScreepsOSCompiler/ScreepsOSCompiler.py", "D:/Screeps/ScreepsOS", "D:/Screeps/ScreepsOSCompiler/out"],
+            "args": ["D:/Screeps/ScreepsOSCompiler/ScreepsOSCompiler.py", "D:/Screeps/ScreepsOS", "$USER_HOME$/AppData/Local/Screeps/scripts/screeps.com/default"],
+        },
+
+    ]
+}

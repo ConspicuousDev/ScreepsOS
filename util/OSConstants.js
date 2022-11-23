@@ -9,10 +9,13 @@ module.exports = {
         KERNEL: 100,
         USER: 0
     },
-    ROOM_OWNERSHIP:{
+    ROOM_OWNERSHIP: {
         UNCLAIMED: "UNCLAIMED",
         OWNED: "OWNED",
         ENEMY: "ENEMY"
+    },
+    CREEP_BODIES: {
+        SMALL_MINER: [WORK, CARRY, MOVE],
     },
     COLORS: {
         FREE: "#2B59C3",
