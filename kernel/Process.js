@@ -28,13 +28,20 @@ class Process {
 
     kill(){
         this.status = OSConstants.STATUS_CODES.DEAD
-        this.kernel.logger.log(this.id, "Killed", "#FF0000")
         this.kernel.killProcess(this.id, this.priority)
+        this.kernel.logger.log(this.id, "Killed", "#FF0000")
+        if(this.parent == null) return
+        this.kernel.findProcess(this.parent).notifyParent(this)
     }
 
-    spawnChild(process){
-        this.status = OSConstants.STATUS_CODES.WAITING_CHILD
-        this.kernel.registerProcess(process)
+    notifyParent(child){
+        this.status = OSConstants.STATUS_CODES.OK
+    }
+
+    spawnChild(child, status = OSConstants.STATUS_CODES.WAITING_CHILD){
+        this.status = status
+        child.parent = this.id
+        this.kernel.registerProcess(child)
     }
 }
 

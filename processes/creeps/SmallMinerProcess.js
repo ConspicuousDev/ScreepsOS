@@ -1,26 +1,49 @@
-const Process = require("../../kernel/Process")
+const CreepProcess = require("./CreepProcess")
 const OSConstants = require("../../util/OSConstants")
+const Methods = require("../../util/Methods")
 
-class SmallMinerProcess extends Process {
-    constructor({kernel, parent, data, priority = 0}){
-        super(`SmallMinerProcess-${data.creepName}`, parent, priority, OSConstants.STATUS_CODES.OK, kernel, data)
+class SmallMinerProcess extends CreepProcess {
+    constructor({kernel, parent, data, priority = 0, status = OSConstants.STATUS_CODES.OK}){
+        super(`SmallMiner-${data.creepName}`, parent, priority, status, kernel, data)
     }
 
     run(){
-        if(this.data.startTick === Game.time+3) return;
-        if(!(this.data.creepName in Game.creeps)){
-            this.kill()
-            return
+        if(super.run() !== OSConstants.STATUS_CODES.OK) return
+
+        let creep = Game.creeps[this.data.creepName]
+
+        //Check if should go to mining spot
+        if(creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0 && !Methods.compareRoomPosition(creep.pos, this.data.miningSpot.pos)){
+            this.kernel.logger.log(this.id, "Starting Move Process")
+            this.spawnChild(new this.kernel.ProcessTable.MoveToTargetProcess({
+                kernel: this.kernel,
+                parent: this.id,
+                data: {
+                    creepName: this.data.creepName,
+                    goalPos: this.data.miningSpot.pos
+                }
+            }))
+        }else if(creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0 && Methods.compareRoomPosition(creep.pos, this.data.miningSpot.pos)){
+            this.spawnChild(new this.kernel.ProcessTable.MineTargetProcess({
+                kernel: this.kernel,
+                parent: this.id,
+                data: {
+                    creepName: this.data.creepName
+                }
+            }))
+            this.kernel.logger.log(this.id, "Starting Mining Process")
+        }else if(creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0 && Methods.compareRoomPosition(creep.pos, this.data.miningSpot.pos)){
+            //Data has to have a goal inventory/structure to place resource in later on.
+            //Send to spawn
+            this.kernel.logger.log(this.id, "Starting Move To Storage Process")
         }
 
-        this.kernel.logger.log(this.id, "WORKING", "#00FF00")
-    }
+        //State Checks
 
-    kill(){
-        super.kill()
-        let parentProcess = this.kernel.findProcess(this.parent)
-        console.log(this.parent, parentProcess.type)
-        parentProcess.notifyChildDone(this.id)
+
+
+        //Goal Check and run subProcesses:
+        //TODO: Make roomwatcher assign mining spot to stand on through data on proccess creation.
     }
 
 }

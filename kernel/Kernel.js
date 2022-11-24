@@ -54,11 +54,15 @@ class Kernel{
         return Game.cpu.limit === undefined || Game.cpu.getUsed() < Game.cpu.limit* .9
     }
     runProcesses(){
+        //console.log("Running processes...")
         for(let priority = 0; priority < this.processes.length; priority++){
             if(!this.processes[priority]) continue
+            //console.log(`  Priority level: ${priority}`)
             for(let i = 0; i < this.processes[priority].length; i++){
-                if(this.canContinue()) this.processes[priority][i].run()
-                else return
+                if(this.canContinue() && this.processes[priority][i].status === OSConstants.STATUS_CODES.OK){
+                    //console.log(`     Ran process ${this.processes[priority][i].id} [${Game.time}]`) 
+                    this.processes[priority][i].run()
+                }
             }
         }
     }

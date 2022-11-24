@@ -2,8 +2,8 @@ const Process = require("../kernel/Process")
 const OSConstants = require("../util/OSConstants")
 class RoomWatcherProcess extends Process{
 
-    constructor({kernel, data, priority = 0}){
-        super(`RoomWatcher-${data.roomName}`, null, priority, OSConstants.STATUS_CODES.OK, kernel, data)
+    constructor({kernel, data, priority = 0, status = OSConstants.STATUS_CODES.OK}){
+        super(`RoomWatcher-${data.roomName}`, null, priority, status, kernel, data)
     }
 
     run(){
@@ -14,21 +14,34 @@ class RoomWatcherProcess extends Process{
         this.checkOwnership(room)
 
         if(!("energySources" in this.data)) this.loadEnergySources(room)
-        if(!("roomExits" in this.data)) this.loadExits(room)
+        if(!("energyExtractionSpots" in this.data)) this.loadEnergyExtractionSpots(room)
+        if(!("exits" in this.data)) this.loadExits(room)
         if(!("workerProcesses" in this.data)) this.data.workerProcesses = []
 
+
         //TODO: Change this check for a [Do we have enough workers to extract max energy check]
+
+        //vamos aq colocar q se tiver algum spot not in use, e tivermos energia pra criar um small (vou pegar a constant) pra criar um worker novo em vez de so se tiver 0 dps
+        //mas antes vamos fazer achar um spot vazio
         if(this.data.workerProcesses.length < 1){
+            let spot = this.data.energyExtractionSpots.find(spot => !spot.takenBy)
+
+            if(!spot) return;
+
             let creep = this.tryCreateSmallWorker()
             if(creep != null){
-                let process = new this.kernel.ProcessTable.SmallMinerProcess({kernel: this.kernel, parent: this.id, priority: this.priority, status: OSConstants.STATUS_CODES.OK, data: {creepName : creep, startTick: Game.time + 9}})
+                let process = new this.kernel.ProcessTable.SmallMinerProcess({kernel: this.kernel, parent: this.id, priority: this.priority, status: OSConstants.STATUS_CODES.OK, data: {creepName : creep, startTick: Game.time + 9, miningSpot: spot}})
+                spot.takenBy = process.id
                 this.kernel.registerProcess(process)
                 this.data.workerProcesses.push(process.id)
             }
         }
 
+
+
         this.highlightExits(this.kernel)
         this.highlightSources(this.kernel)
+        this.highlightExtractionSpots()
     }
 
     /** @param {Room} room */
@@ -41,50 +54,69 @@ class RoomWatcherProcess extends Process{
     }
 
     /** @param {Room} room */
-    loadEnergySources(room){
-        let sources = room.find(FIND_SOURCES)
-
-        //this.data.energySources = {}
-        /*sources.forEach(entry => {
-        let entryId = entry.id
-        delete entry.room
-        delete entry.roomName
-        delete entry.id
-
-        console.log(entryId)
-        this.data.energySources[entryId] = entry
-        })*/
-
-        this.data.energySources = {}
-        for (const entry in sources) {
-            this.data.energySources[sources[entry].id] = { pos: sources[entry].pos, energy: sources[entry].energy, energyCapacity: sources[entry].energyCapacity }
-        }
-
-
-        //this.data.energySources = sources
-        //this.kernel.logger.log(this.id, JSON.stringify(room.find(FIND_SOURCES)))
-    }
-
-    /** @param {Room} room */
     loadExits(room){
-        let foundExits = room.find(FIND_EXIT)
-
-        //roomExits.map(entry => {delete entry.roomName; return entry})
-        //console.log(JSON.stringify( roomExits.map(entry => {delete entry.roomName; return entry})))
-
-        this.data.roomExits = []
-        for (const entry in foundExits) {
-            this.data.roomExits[entry] = {x: foundExits[entry].x, y: foundExits[entry].y}
-        }
+        let exits = room.find(FIND_EXIT)
+        this.data.exits = []
+        Object.keys(exits).forEach(key => {
+            this.data.exits.push({
+                pos: {
+                    x: exits[key].x,
+                    y: exits[key].y,
+                    roomName: room.name
+                }
+            })
+        })
+    }
+    /** @param {Room} room */
+    loadEnergySources(room){
+        let energySources = room.find(FIND_SOURCES)
+        this.data.energySources = {}
+        Object.keys(energySources).forEach(key => {
+            this.data.energySources[energySources[key].id] = {
+                pos: energySources[key].pos,
+                energy: energySources[key].energy,
+                energyCapacity: energySources[key].energyCapacity
+            }
+        })
+    }
+    /* @param {Room} room */
+    loadEnergyExtractionSpots(room){
+        this.data.energyExtractionSpots = []
+        let keys = Object.keys(this.data.energySources)
+        let positions = keys.map(key => this.data.energySources[key].pos)
+        positions.forEach(pos => {
+            for(let xOffset = -1; xOffset <= 1; xOffset++){
+                for(let yOffset = -1; yOffset <= 1; yOffset++){
+                    if(xOffset === 0 && yOffset === 0)
+                        continue
+                    let terrain = room.getTerrain().get(pos.x + xOffset, pos.y + yOffset)
+                    if(terrain !== TERRAIN_MASK_WALL){
+                        this.data.energyExtractionSpots.push({
+                            pos: {
+                                x: pos.x+xOffset,
+                                y: pos.y+yOffset,
+                                roomName: room.name,
+                            },
+                            takenBy: null
+                        })
+                    }
+                }
+            }
+        })
     }
 
     highlightExits(){
-        this.data.roomExits.forEach(element => this.kernel.drawer.setHighlightSquare({x: element.x, y: element.y, roomName: this.data.roomName}, "#00FF00", .5));
+        this.data.exits.forEach(exit => this.kernel.drawer.highlightSquare(exit.pos, OSConstants.COLORS.EXIT, .5));
+    }
+    highlightSources(){
+        Object.keys(this.data.energySources).forEach(element => this.kernel.drawer.highlightSquare({x: this.data.energySources[element].pos.x, y: this.data.energySources[element].pos.y, roomName: this.data.roomName}, OSConstants.COLORS.ENERGY_SOURCE, .5));
+    }
+    highlightExtractionSpots(){
+        this.data.energyExtractionSpots.forEach(spot => {
+            this.kernel.drawer.highlightSquare(spot.pos, (spot.takenBy ? OSConstants.COLORS.OCCUPIED : OSConstants.COLORS.FREE))
+        })
     }
 
-    highlightSources(){
-        Object.keys(this.data.energySources).forEach(element => this.kernel.drawer.setHighlightSquare({x: this.data.energySources[element].pos.x, y: this.data.energySources[element].pos.y, roomName: this.data.roomName}, "#FFFF00", .5));
-    }
 
     tryCreateSmallWorker(){
         let spawners = Game.rooms[this.data.roomName].find(FIND_MY_SPAWNS)
@@ -110,8 +142,14 @@ class RoomWatcherProcess extends Process{
         chosenSpawner.spawnCreep(OSConstants.CREEP_BODIES.SMALL_MINER, creepName)
         return creepName
     }
-    notifyChildDone(processID){
-        this.data.workerProcesses = this.data.workerProcesses.filter(process => process !== processID)
+
+    notifyParent(child){
+        if(child instanceof this.kernel.ProcessTable.SmallMinerProcess){
+            console.log(child.id)
+            this.data.energyExtractionSpots.find(spot => spot.takenBy === child.id).takenBy = null
+
+            this.data.workerProcesses = this.data.workerProcesses.filter(process => process !== child.id)
+        }
     }
 }
 
