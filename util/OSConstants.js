@@ -2,7 +2,8 @@ module.exports = {
     STATUS_CODES: {
         DEAD: "DEAD",
         OK: "OK",
-        WAITING_CHILD: "WAITING_CHILD"
+        WAITING_CHILD: "WAITING_CHILD",
+        WAITING_RESOURCE: "WAITING_RESOURCE"
     },
     PROCESS_PRIORITIES: {
         KERNEL: 100,

@@ -1,4 +1,4 @@
-const Process = require("../kernel/Process")
+const Process = require("../util/Process")
 const OSConstants = require("../util/OSConstants")
 
 class DrawProcess extends Process{

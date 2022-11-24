@@ -5,6 +5,5 @@ global.listProcesses = () => kernel.processes.forEach(priority => priority ? pri
 global.killProcess = (id, priority = -1) => kernel.killProcess(id, priority)
 
 module.exports.loop = () => {
-
     kernel.deconstruct()
 }

@@ -6,7 +6,7 @@ class MemoryManager {
         if("creeps" in this.memory || Object.keys(this.memory).length === 0){
             this.memory = {
                 processes: [],
-                ram: {}
+                requests: {}
             }
         }
         

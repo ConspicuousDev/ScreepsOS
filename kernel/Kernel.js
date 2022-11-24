@@ -42,12 +42,16 @@ class Kernel{
         else
             this.processes[priority] = this.processes[priority] ? this.processes[priority].filter(process => process.id !== id) : undefined
     }
-
     parseProcesses(processesJson){
         return processesJson.map(priorityLevel => priorityLevel ? priorityLevel.map(process => new this.ProcessTable[process.type]({...process, kernel: this})) : undefined)
     }
     serializeProcesses(processes){
         return processes.map(priorityLevel => priorityLevel ? priorityLevel.map(process => process.serialize()) : undefined)
+    }
+
+    placeRequest(request){
+        this.manager.memory.requests[request.id] = request
+        return request.id
     }
 
     canContinue(){
